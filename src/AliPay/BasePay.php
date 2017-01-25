@@ -100,7 +100,26 @@ abstract class BasePay implements PayInterface
         }
 
         return false;
+    }
 
+    /**
+     * 验证跳转参数签名是否正确
+     *
+     * @param $request
+     * @return bool
+     */
+    public function verifyRedirect($request)
+    {
+        if(empty($request)) {//判断请求的参数是否为空
+            return false;
+        }
+
+        //生成签名结果
+        $data['prestr'] = Helper::buildRequestPreStr($request);
+        $data['sign'] = $request['sign'];
+        $isSign = $this->sign->verifySign($data, trim($this->config[$this->signKeyConfigName]));
+
+        return $isSign;
     }
 
     /**
